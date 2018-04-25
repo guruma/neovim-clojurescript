@@ -3,7 +3,9 @@ pom.xml.asc
 log.txt
 *.jar
 *.class
+package-lock.json
 /out/
+/node_modules
 /lib/
 /classes/
 /target/
@@ -13,3 +15,8 @@ log.txt
 .lein-plugins/
 .lein-failures
 .nrepl-port
+
+*~
+*#
+.#*
+
