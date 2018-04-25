@@ -56,7 +56,7 @@
           ; exceptions raised in the handler function of the client 
           ; are ignored.
           ;
-          ; so...and here, I decided to response when sync is true.
+          ; so...and here, I decided to response only when sync is true.
           ;
           (when (:sync spec) (rpc/send-response plugin msgid nil result)))
         (log (str "The handler is not a function : " method))))

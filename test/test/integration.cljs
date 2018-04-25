@@ -43,7 +43,7 @@
     ))
 
 (defn test-nvim []
-  (let [args ["-u" "NONE"
+  (let [args ["-u" nvimrc-path
               "--embed" 
               "-i" "NONE" 
               "-N"
