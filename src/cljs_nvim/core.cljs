@@ -1,9 +1,8 @@
 (ns cljs-nvim.core
-  (:require-macros [cljs-nvim.plugin :refer [defhandler]])
   (:require [cljs-nvim.node.process :as process]
             [cljs-nvim.msgpack.rpc :as rpc]
             [cljs-nvim.util :refer [log] :as u]
-            [cljs-nvim.plugin :as plugin]))
+            [cljs-nvim.plugin :as plugin :refer-macros [defhandler]]))
 
 ;(nodejs/enable-util-print!)
 
