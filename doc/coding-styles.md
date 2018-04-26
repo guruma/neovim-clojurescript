@@ -88,7 +88,7 @@ end side.
 Global const symbols consist of all capital letters.
 
 ```
-(def GLOBAL-CONST ^:const 100)
+(def ^:const GLOBAL-CONST 100)
 
 (+ 10 GLOBAL-CONST)
 ; => 110
@@ -98,12 +98,12 @@ They are a little different from the global symbols from the viewpoint of the
 compiler. The next example shows the difference.
 
 ```
-(def GLOBAL-CONST ^:const 100)
+(def ^:const GLOBAL-CONST 100)
 
 (+ 10 GLOBAL-CONST)
 ; => 110
 
-;; Compiler sees the above as the follwing. That is, GLOBAL-CONST expands into 100 before
+;; Compiler sees the above as the follwing. That is, GLOBAL-CONST expands to 100 before
 ;; compiling.
 (+ 10 100)
 ```
@@ -114,9 +114,8 @@ compiler. The next example shows the difference.
 (+ 10 global-symbol*)
 ; => 110
 
-;; Compiler sees the above as the follwing. That is, global-symbol* doesn't expand into
-;; 100 before compiling.
-
+;; Compiler sees the above as the follwing. That is, global-symbol* doesn't expand to 100
+;; before compiling.
 (+ 10 global-symbol*)
 ```
 
