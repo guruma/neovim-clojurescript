@@ -25,8 +25,8 @@ community.
 
 ## Global Symbols
 
-Global symbols have one star mark at the end side. This makes it easy to identify the
-global symbol in the function definitions.
+Global symbols have one star mark at the end. This makes it easy to identify the global
+symbol in the function definitions.
  
 
 ```
@@ -41,7 +41,7 @@ global symbol in the function definitions.
 
 ## Local Reference Symbols
 
-Local reference symbols like an atom have one exclamation mark at the end side.
+Local reference symbols like an atom have one exclamation mark at the end.
 
 ```
 (defn my-add [a b]
@@ -63,7 +63,7 @@ Local reference symbols like an atom have one exclamation mark at the end side.
 ## Global Reference Symbols
 
 Global reference symbols like an atom have one star mark and one exclamation mark at the
-end side.
+end.
 
 ```
 (def global-reference*! 100)

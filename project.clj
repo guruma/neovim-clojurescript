@@ -1,15 +1,18 @@
-(defproject test "0.1.0-SNAPSHOT"
-  :description "FIXME: write this!"
-  :url "http://example.com/FIXME"
+(defproject neovim-clojurescript "0.1.0-SNAPSHOT"
+  :description "Neovim provider for ClojureScript"
+  :url "https://github.com/guruma/neovim-clojurescript"
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946"]
+                 [org.clojure/clojurescript "1.10.238"]
                  [org.clojure/core.async "0.4.474"]
-                 [com.cemerick/piggieback "0.1.3"]]
+                 [com.cemerick/piggieback "0.2.2"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
   ;:repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
+  :clean-targets ^{:protect false}
+  ["target" "out"]
+  
   :cljsbuild {
     :builds [{:id "prod"
               :source-paths ["src"]
@@ -36,4 +39,10 @@
                 :optimizations :simple}
              }
             ]
-    })
+    }
+
+  :aliases {"prod" ["cljsbuild" "once" "prod"]
+            "test" ["do" "clean"
+                    ["prod"]
+                    ["cljsbuild" "once" "test"]]}
+  )

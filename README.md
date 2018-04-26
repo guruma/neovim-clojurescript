@@ -8,7 +8,7 @@
 
 ## compile
 
-	$ lein cljsbuild once prod
+	$ lein prod
 
 ## run
 
@@ -26,9 +26,9 @@ and enter ex mode in nvim to type ":NodeCmdArg0" and you can see "Hello, NVIM" m
 
 ## test
 
-	$ lein cljsbuild once test
+	$ lein test
 	$ node out/integration-test.js
-	$ cat log.txt
+	$ cat out/log.txt
 
 
 ## [The Coding Styles](doc/coding-styles.md)
