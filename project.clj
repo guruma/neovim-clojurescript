@@ -5,6 +5,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.238"]
                  [org.clojure/core.async "0.4.474"]
+                 ;[funcool/promesa "1.9.0"]
                  [com.cemerick/piggieback "0.2.2"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]

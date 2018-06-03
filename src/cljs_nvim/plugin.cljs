@@ -20,7 +20,7 @@
          (str (u/plugin-path) ":command:" command)
          [handler spec]))
 
-; request: [type, msgid, method, params]
+; request: [type(0), msgid, method, params]
 (defn- handle-request [plugin [_ msgid method params]]
   (log "handle-request:")
   (log (str "  [type:]  " _))
@@ -45,7 +45,7 @@
     (get-handler plugin method)
     (let [[handler-fn spec] (get-handler plugin method)]
       (if (fn? handler-fn)
-        (let [result (handler-fn plugin params)]
+        (let [result (handler-fn (merge plugin {:msgid msgid}) params)]
           ;
           ; https://neovim.io/doc/user/remote_plugin.html
           ;
@@ -58,14 +58,15 @@
           ;
           ; so...and here, I decided to response only when sync is true.
           ;
-          (when (:sync spec) (rpc/send-response plugin msgid nil result)))
+          ; commented... becuase responding is up to handler-fn as a hack.
+          #_(when (:sync spec) (rpc/send-response plugin msgid nil result)))
         (log (str "The handler is not a function : " method))))
 
     :else 
       (log "handle-invalid-request")))
 
 
-; notification: [type, method, params]
+; notification: [type(2), method, params]
 (defn- handle-notification [plugin [_ method params]]
   (log (str "handle-notification: " method))
   (log (str "  [type:]  " _))
@@ -76,25 +77,54 @@
     (handler-fn plugin params)
     (log "handle-invalid-notification")))
 
-; response: [type, msgid, error, result]
-(defn- handle-response [plugin [_ msgid error params]]
+; response: [type(1), msgid, error, result]
+(defn- handle-response [plugin [_ msgid error result]]
   (log (str "handle-response: "))
   (log (str "  [type:] " _))
   (log (str "  [msgid] " msgid))
   (log (str "  [error] " error))
-  (log (str "  [params] " params)))
+  (log (str "  [result] " result))
+
+  (let [responses (:responses plugin)]
+    (when (and (< 0 msgid) (contains? @responses msgid))
+      (log (str "  [swap] " [result error]))
+      (swap! responses assoc msgid [result error]))))
+
+(defn fill-value [m v]
+  (reduce-kv #(assoc %1 %2 v) {} m))
 
 
 ;; ***** Public *****
 
+(defn dettach 
+  [{:keys [input-stream output-stream
+           encode-stream decode-stream
+           responses ]}]
+
+  (swap! responses fill-value "plugin dettached")
+  (log (str @responses))
+  (.unpipe @input-stream decode-stream)
+  (.unpipe encode-stream @output-stream)
+  (reset! input-stream nil)
+  (reset! output-stream nil)
+    #_(.end encode-stream))  ; TODO: end를 호출해야 하나?
+  
+
 (defn attach 
   [{:keys [input-stream output-stream
-           encode-stream decode-stream]
+           encode-stream decode-stream
+           ]
     :as plugin}
    input output]
+  (log "attaching plugin...")
 
   (reset! input-stream input)
   (reset! output-stream output)
+  (.on input
+       "end"
+       (fn [err] 
+         (log (str "input stream ends... " err))
+         (dettach plugin)))
   (.pipe encode-stream @output-stream)
   (.on 
     (.pipe @input-stream decode-stream)
@@ -106,20 +136,12 @@
         rpc/*response*     (handle-response plugin data)
         (log "invalid type of msgpack protocol")))))
 
-(defn dettach 
-  [{:keys [input-stream output-stream
-           encode-stream decode-stream
-           handle-data-fn]}]
-
-  (.unpipe @input-stream decode-stream)
-  (.unpipe encode-stream @output-stream)
-    #_(.end encode-stream))  ; TODO: end를 호출해야 하나?
-
 
 (defn make-plugin []
  {:handlers handlers*
-  :sending-messages (atom {})
+  :responses (atom {})
   :encode-stream (msgpack/create-encode-stream) 
   :decode-stream (msgpack/create-decode-stream)
   :input-stream (atom nil)
   :output-stream (atom nil)})
+

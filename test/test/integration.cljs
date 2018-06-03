@@ -4,8 +4,11 @@
             [cljs-nvim.node.fs :as fs]
             [cljs-nvim.plugin :as plugin]
             [cljs-nvim.msgpack.rpc :as rpc]
-            [cljs-nvim.util :as u]
+            [cljs-nvim.util :refer [log] :as u]
             ))
+
+;; TODO: To globally require for any platform. 
+(def deasync (js/require "/usr/local/lib/node_modules/deasync"))
 
 (def plugin-file-name "host-plugin.js")
 (def plugin-dir (u/plugin-dir))
@@ -36,6 +39,7 @@
               "-N" 
               "-c" "UpdateRemotePlugins"
               "-c" "q!"]]
+    (log "test update-rplugins")
     (make-nvimrc)
     (copy-plugin)
     (cp/spawn-sync "nvim" args)
@@ -50,10 +54,14 @@
               ;"-c" "call remote#host#RegisterNodePlugin()"
               ]
         my-plugin (plugin/make-plugin)
-        nvim (cp/spawn "nvim" (clj->js args) {})]
+        nvim (cp/spawn "nvim" args {})]
+    (log "test test-nvim")
     (plugin/attach my-plugin (.-stdout nvim) (.-stdin nvim))
-    (rpc/send-command my-plugin "NodeCmdArg0")))
-
+    ;(rpc/send-command my-plugin "echo 'hello'")
+    (rpc/send-command my-plugin "NodeCmdArg1 222")
+    ; NOTE: nvim exits without response to nvim command of "q!"
+    ;(rpc/send-command my-plugin "q!")
+    ))
 
 (defn -main [& args]
   (update-rplugins)

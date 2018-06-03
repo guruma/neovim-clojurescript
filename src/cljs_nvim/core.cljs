@@ -28,6 +28,7 @@
   {:sync true :type "command" :name "NodeCmdArgN" :opts {:nargs "*"}} 
   node-cmd-argn [plugin params]
    (log "node-cmd-argn")
+   (rpc/send-ok plugin)
    (rpc/send-command plugin (str "echom 'HHello, nvim! - " params "'")))
 
 
