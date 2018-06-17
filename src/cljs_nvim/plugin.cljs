@@ -90,6 +90,9 @@
       (log (str "  [swap] " [result error]))
       (swap! responses assoc msgid [result error]))))
 
+(defn- handle-invalid-message [plugin data]
+  (log "invalid type of msgpack protocol"))
+
 (defn fill-value [m v]
   (reduce-kv #(assoc %1 %2 v) {} m))
 
@@ -134,7 +137,8 @@
         rpc/*request*      (handle-request plugin data)
         rpc/*notification* (handle-notification plugin data)
         rpc/*response*     (handle-response plugin data)
-        (log "invalid type of msgpack protocol")))))
+        (handle-invalid-message)
+        ))))
 
 
 (defn make-plugin []
