@@ -137,7 +137,7 @@
         rpc/*request*      (handle-request plugin data)
         rpc/*notification* (handle-notification plugin data)
         rpc/*response*     (handle-response plugin data)
-        (handle-invalid-message)
+        (handle-invalid-message plugin data)
         ))))
 
 
