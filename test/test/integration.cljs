@@ -60,7 +60,7 @@
     ;(rpc/send-command my-plugin "echo 'hello'")
     (rpc/send-command my-plugin "NodeCmdArg1 222")
     ; NOTE: nvim exits without response to nvim command of "q!"
-    ;(rpc/send-command my-plugin "q!")
+    (rpc/send-command my-plugin "q!")
     ))
 
 (defn -main [& args]
