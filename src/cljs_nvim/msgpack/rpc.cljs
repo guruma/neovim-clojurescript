@@ -25,7 +25,7 @@
     (.write encode-stream (clj->js data))
     (._flush encode-stream)))
 
-(defn send-data-sync 
+#_(defn send-data-sync 
   [{:keys [responses] :as plugin}
    [_ msgid _ _ :as data]]
   (log (str "send-data-sync: " data))
@@ -40,6 +40,20 @@
           (log (str "send-data-sync: got response..." ret))
           ret)
         (recur)))))
+
+(defn send-data-sync 
+  [{:keys [responses] :as plugin}
+   [_ msgid _ _ :as data]]
+  (log (str "send-data-sync: " data))
+  (when (attached? plugin)
+    (swap! responses assoc msgid nil)
+    (send-data plugin data)
+    (log (str "send-data-sync: waiting response..."))
+    (deasync.loopWhile #(not (get @responses msgid)))
+    (let [ret (get @responses msgid)]
+      (swap! responses dissoc msgid)
+      (log (str "send-data-sync: got response..." ret))
+      ret)))
 
 (defn send-request [plugin & data]
   (log (str "send-request: " data))
